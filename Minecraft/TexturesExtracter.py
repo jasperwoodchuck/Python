@@ -2,6 +2,7 @@ from PIL.Image import Resampling
 from PIL import Image as IMG
 import os, zipfile
 
+
 def extract_textures() -> None:
     APPDATA = os.getenv("APPDATA")
     APPdirs = os.path.join(APPDATA, ".minecraft", "versions")
@@ -27,6 +28,7 @@ def extract_textures() -> None:
 
     scale_textures(version)
 
+
 def textures_to_pngsequence(image_path: str) -> None:
     nimage = IMG.open(image_path)
     breath = nimage.width
@@ -38,20 +40,20 @@ def textures_to_pngsequence(image_path: str) -> None:
         os.makedirs(output, exist_ok=True)
 
         for count in range(ntiles):
-            upper = count * 16 
+            upper = count * 16
             lower = upper + 16
             ntile = nimage.crop((0, upper, breath, lower))
             ntile_path = os.path.join(
-                output,
-                f'{os.path.basename(image_path)[:-4]}_{count}.png'
-                )
+                output, f"{os.path.basename(image_path)[:-4]}_{count}.png"
+            )
             try:
                 ntile.save(ntile_path)
                 print(f"{ntile_path}")
             except FileNotFoundError:
-                ... 
+                ...
 
         os.remove(image_path)
+
 
 def scale_textures(version: str) -> None:
     base_path = os.path.join(version)
@@ -63,13 +65,12 @@ def scale_textures(version: str) -> None:
                 if not img.size == (16, 16):
                     continue
 
-                img_resized = img.resize(
-                    (256, 256), resample=Resampling.NEAREST
-                    )
+                img_resized = img.resize((256, 256), resample=Resampling.NEAREST)
                 img_resized.save(file_path)
                 print(file_path)
             except:
                 ...
-                    
+
+
 if __name__ == "__main__":
     extract_textures()
