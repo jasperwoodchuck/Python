@@ -4,19 +4,21 @@ import os
 
 def scale_textures(path: str) -> None:
     base_path = os.path.join(path)
-    for root, dirs, files in os.walk(base_path):
+    for root, _dirs, files in os.walk(base_path):
         for file in files:
             file_path = os.path.join(root, file)
             try:
                 img = IMG.open(file_path)
-                if not img.size == (18, 18):
-                    continue
+                breath, height = img.size
 
-                img_resized = img.resize((256, 256), resample=Resampling.NEAREST)
+                multiplier = 1024 / max(breath, height)
+                size = (int(breath * multiplier), int(height * multiplier))
+
+                img_resized = img.resize(size, resample=Resampling.NEAREST)
                 img_resized.save(file_path)
-                print(file_path)
-            except:
-                ...
+                print(f"[Resized] {file_path} -> {size}")
+            except Exception as e:
+                print(f"[Skipped] {file_path} ({e})")
 
 if __name__ == "__main__":
     path = r"<insert path here>"
